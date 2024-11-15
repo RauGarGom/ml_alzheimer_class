@@ -8,9 +8,14 @@ from sklearn import svm
 from sklearn.metrics import auc, roc_auc_score, accuracy_score, confusion_matrix
 from xgboost import XGBClassifier
 import pickle
+from tensorflow.keras import layers, models
+from matplotlib.image import imread
+import cv2
 
-with open('../models/xgb_baseline.pkl', 'rb') as f:
-    model = pickle.load(f)
+### Loading of models
+with open('../models/class/xgb_baseline.pkl', 'rb') as f:
+    class_model = pickle.load(f)
+img_model = models.load_model("../models/image/baseline_model.keras")
 
 def feat_eng(df):
     df['BadSleep'] = np.where(df['SleepQuality']<5,1,0)
@@ -34,7 +39,14 @@ def model_prediction(mmse="1",funct_asses=1,memory="Yes",behav="Yes",adl=1):
     behav = np.where(behav=='Yes',1,0)
 
     ### Prediction. Values which are hardcoded are mix
-    result = model.predict(np.array([[mmse,funct_asses,memory,behav,adl,382]]))
+    result = class_model.predict(np.array([[mmse,funct_asses,memory,behav,adl,382]]))
     text_result = str(np.where(result == 1, "Patient presents signs of alzheimer","Patient shows no signs of alzehimer")[0])
     return text_result
 
+def img_model_prediction(image_path):
+    image = cv2.imdecode(image_path, cv2.IMREAD_COLOR)
+    image = cv2.resize(image, (32, 32)) ### 32x32 pixels
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY) ### Conversion to gray scale
+    image = image.reshape(-1, 32, 32, 1)
+    img_pred = img_model.predict(image)
+    return img_pred.argmax()
