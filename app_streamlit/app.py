@@ -4,7 +4,9 @@ import numpy as np
 import streamlit as st
 import pickle
 # import numpy as np
-sys.path.append(os.path.abspath(r'C:\Users\raulg\Documents\THEBRIDGE_DS\0.-Repo_Git\ml_alzheimer_class\src'))
+#  sys.path.append(os.path.abspath(r'C:\Users\raulg\Documents\THEBRIDGE_DS\0.-Repo_Git\ml_alzheimer_class\src'))
+sys.path.append(os.path.relpath('../src'))
+
 import utils as ut  ### TODO: Intentar que sea relative path
 
 ### Import of model
