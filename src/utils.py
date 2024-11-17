@@ -22,11 +22,16 @@ def feat_eng(df):
     df['Overweight'] = np.where(df['BMI']>25,1,0)
     df['mix'] = df['FunctionalAssessment'] * df['MMSE'] * df['ADL']
     df['mix2'] = df['MemoryComplaints'] + df['BehavioralProblems']
+    df['Elder'] = np.where(df['Age']<df['Age'].mean(),1,0)
+    df['medical_conditions']= -df['FamilyHistoryAlzheimers'] + df['CardiovascularDisease']-df['Diabetes']-df['Depression']-df['HeadInjury']+df['Hypertension']
+    df['demographics'] = df['Elder'] + df['Gender'] + df['Ethnicity'] + df['EducationLevel']
+    df['clinical'] = -df['SystolicBP'] + df['DiastolicBP'] + df['CholesterolTotal'] - df['CholesterolLDL'] -df['CholesterolLDL'] +df['CholesterolHDL'] +df['CholesterolTriglycerides']
+    df['symptoms'] = -df['Confusion'] - df['Disorientation'] - df['PersonalityChanges'] + df['DifficultyCompletingTasks']
     return df
 def train_test(df,test_size=.3):
     x1 = df.drop(columns=['Diagnosis'])
     y1 = df['Diagnosis']
-    x1_train, x1_test, y1_train, y1_test = train_test_split(x1,y1, test_size=test_size,stratify=y1)
+    x1_train, x1_test, y1_train, y1_test = train_test_split(x1,y1, test_size=test_size,stratify=y1,random_state=42)
     return x1_train, x1_test, y1_train, y1_test
 
 

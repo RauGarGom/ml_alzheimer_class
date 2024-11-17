@@ -1,0 +1,4 @@
+model = GradientBoost
+Accuracy = 0.96
+Recall = 0.914
+AUC = 0.5

@@ -1,0 +1,4 @@
+model = XGBoost
+Accuracy = 0.95
+Recall = 0.912
+AUC = 0.94
