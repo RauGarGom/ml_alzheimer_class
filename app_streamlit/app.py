@@ -6,8 +6,7 @@ import pickle
 # import numpy as np
 #  sys.path.append(os.path.abspath(r'C:\Users\raulg\Documents\THEBRIDGE_DS\0.-Repo_Git\ml_alzheimer_class\src'))
 sys.path.append(os.path.relpath('../src'))
-
-import utils as ut  ### TODO: Intentar que sea relative path
+from utils import model_prediction, img_model_prediction  ### TODO: Intentar que sea relative path
 
 ### Import of model
 with open('../models/class/xgb_baseline.pkl', 'rb') as f:
@@ -34,16 +33,16 @@ adl = st.selectbox(
     (0,1,2,3,4,5,6,7,8,9,10))
 
 def results():
-    st.session_state['result'] = ut.model_prediction(mmse,funct_assess,memory,behav,adl)
+    st.session_state['result'] = model_prediction(mmse,funct_assess,memory,behav,adl)
 
 if st.button('Run prediction'):
-    resultado = ut.model_prediction(mmse, funct_assess, memory, behav, adl)
+    resultado = model_prediction(mmse, funct_assess, memory, behav, adl)
     st.write(resultado)
 
 uploaded_img = st.file_uploader("Sube una imagen", type=["jpg", "jpeg", "png"])
 if st.button('Run image prediction'):
     img_bytes = np.asarray(bytearray(uploaded_img.read()), dtype=np.uint8)
-    result = ut.img_model_prediction(img_bytes)
+    result = img_model_prediction(img_bytes)
     st.write(result)
 
 # pred = model.predict(user_input)
