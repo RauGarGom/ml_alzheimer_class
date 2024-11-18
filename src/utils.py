@@ -13,9 +13,9 @@ from tensorflow.keras import models
 import cv2
 
 ### Loading of models
-with open('../models/class/xgb_baseline.pkl', 'rb') as f:
+with open('../models/class/model_2.pkl', 'rb') as f:
     class_model = pickle.load(f)
-img_model = models.load_model("../models/image/baseline_model.keras")
+img_model = models.load_model("../models/image/model_4.keras")
 
 def feat_eng(df):
     df['BadSleep'] = np.where(df['SleepQuality']<5,1,0)
@@ -28,12 +28,15 @@ def feat_eng(df):
     df['clinical'] = -df['SystolicBP'] + df['DiastolicBP'] + df['CholesterolTotal'] - df['CholesterolLDL'] -df['CholesterolLDL'] +df['CholesterolHDL'] +df['CholesterolTriglycerides']
     df['symptoms'] = -df['Confusion'] - df['Disorientation'] - df['PersonalityChanges'] + df['DifficultyCompletingTasks']
     return df
-def train_test(df,test_size=.3):
+def train_test(df,test_size=.3,val_size=0.2,val_set=False):
     x1 = df.drop(columns=['Diagnosis'])
     y1 = df['Diagnosis']
     x1_train, x1_test, y1_train, y1_test = train_test_split(x1,y1, test_size=test_size,stratify=y1,random_state=42)
-    return x1_train, x1_test, y1_train, y1_test
-
+    if val_set==False:
+        return x1_train, x1_test, y1_train, y1_test
+    else:
+        x1_train,x1_val,y1_train,y1_val = train_test_split(x1_train,y1_train, test_size=val_size,stratify=y1_train,random_state=42)
+        return x1_train, x1_test,x1_val, y1_train, y1_test,y1_val
 
 
 def model_prediction(mmse="1",funct_asses=1,memory="Yes",behav="Yes",adl=1):
@@ -44,17 +47,38 @@ def model_prediction(mmse="1",funct_asses=1,memory="Yes",behav="Yes",adl=1):
     behav = np.where(behav=='Yes',1,0)
 
     ### Prediction. Values which are hardcoded are mix
-    result = class_model.predict(np.array([[mmse,funct_asses,memory,behav,adl,382]]))
-    text_result = str(np.where(result == 1, "Patient presents signs of alzheimer","Patient shows no signs of alzehimer")[0])
-    return text_result
+    result = class_model.predict(np.array([[mmse,funct_asses,memory,behav,adl]]))
+    text_result = str(np.where(result == 1, "Patient presents signs of alzheimer. Please confirm with MRI prediction","Patient shows no signs of alzehimer")[0])
+    result_proba = class_model.predict_proba(np.array([[mmse,funct_asses,memory,behav,adl]]))
+    result_stream = result
+    if (result_proba.max() < 0.9) and (result==0):
+        text_result = str('Patient shows no signs of alzheimer, but the model is unsure. MRI model prediction is advised')
+        result_stream = 2
+    if  (result_proba.max() < 0.9) and (result==1):
+        text_result = str('Patient shows signs of alzheimer, but the model is unsure. MRI model prediction is advised')
+        result_stream = 3
+    return result, text_result, result_proba, result_stream
 
-def img_model_prediction(image_path):
+def img_model_prediction(image_path,img_size=64):
+    '''Img_size must be the same as the one used by the training of the model.
+    Model 4 (used in the demo) is made with 64x64'''
     image = cv2.imdecode(image_path, cv2.IMREAD_COLOR)
-    image = cv2.resize(image, (32, 32)) ### 32x32 pixels
-    image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY) ### Conversion to gray scale
-    image = image.reshape(-1, 32, 32, 1)
+    # mapping = {
+    #     0: 'Non Demented',
+    #     1: 'Very Mild Demented',
+    #     2: 'Mild Demented',
+    #     3: 'Moderate Demented' 3
+    # }
+    if img_size == 32:
+        image = cv2.resize(image, (32, 32)) ### 32x32 pixels
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY) ### Conversion to gray scale
+        image = image.reshape(-1, 32, 32, 1)
+    else:
+        image = cv2.resize(image, (64, 64))
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY) ### Conversion to gray scale
+        image = image.reshape(-1, 64, 64, 1)        
     img_pred = img_model.predict(image)
-    return img_pred.argmax()
+    return img_pred.argmax(),img_pred.round(2)
 
 def img_images_load(x1_train_path='../data/images/processed_train/x1.pkl',y1_train_path='../data/images/processed_train/y1.pkl',
                     x1_test_path='../data/images/processed_val/x2.pkl',y1_test_path='../data/images/processed_val/y2.pkl',

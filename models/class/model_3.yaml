@@ -1,0 +1,4 @@
+model = Neural Network
+Accuracy = 0.92
+Recall = 0.92
+AUC = 0.91
