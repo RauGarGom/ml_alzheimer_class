@@ -5,8 +5,8 @@ import streamlit as st
 import plotly.express as px
 # import numpy as np
 #  sys.path.append(os.path.abspath(r'C:\Users\raulg\Documents\THEBRIDGE_DS\0.-Repo_Git\ml_alzheimer_class\src'))
-sys.path.append(os.path.relpath('/src'))
-from utils import model_prediction, img_model_prediction  ### TODO: Intentar que sea relative path
+# sys.path.append(os.path.relpath('/src'))
+from src.utils import model_prediction, img_model_prediction  ### TODO: Intentar que sea relative path
 
 
 ###Global variables
