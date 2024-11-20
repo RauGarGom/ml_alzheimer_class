@@ -10,15 +10,14 @@ import pickle
 sys.path.append(os.path.relpath('../src'))
 from utils import model_prediction, img_model_prediction  ### TODO: Intentar que sea relative path
 
-### Import of model
-# with open('../models/class/xgb_baseline.pkl', 'rb') as f:
-#     xgb_baseline = pickle.load(f)
 
-### Streamlit
-# Title of the app
-st.title('Alzheimer form')
-st.session_state['result'] = ''
-resultado = [0,0,0,0]
+###Global variables
+if "result" not in st.session_state:
+    st.session_state['result'] = ''
+if "chart" not in st.session_state:
+    st.session_state.chart = None
+if 'class_result' not in st.session_state:
+    st.session_state.class_result = None #[0,0,0,0]
 mapping_class = {
         0: 'No Alzheimer',
         1: 'Alzheimer',
@@ -31,7 +30,18 @@ mapping_img = {
     }
 with st.sidebar:
     st.title("Charts of the predictions")
+    if st.session_state['chart'] == None:
+        st.write("No chart to display yet.")
+        
 
+# Title of the app and header
+st.title('Alzheimer diagnosis tool')
+st.subheader('Medical tool for Alzheimer diagnosis by Raúl García')
+st.subheader('')
+
+
+
+st.header('Preliminary form')
 ### CLASS - Inputs
 funct_assess = st.slider("What's the patient's Functional Assessment Scoring?:",0,30)
 
@@ -56,26 +66,35 @@ def results():
     st.session_state['result'] = model_prediction(mmse,funct_assess,memory,behav,adl)
 
 if st.button('Run prediction'):
-    resultado = model_prediction(mmse, funct_assess, memory, behav, adl)
-    st.write(resultado)
-    if resultado[3] == 1:
-        st.error(resultado[1])
-    elif resultado[3]==0:
-        st.success(resultado[1])
+    st.session_state.class_result = model_prediction(mmse, funct_assess, memory, behav, adl)
+    class_result = st.session_state.class_result
+    if class_result[3] == 1:
+        st.error(class_result[1])
+    elif class_result[3]==0:
+        st.success(class_result[1])
     else:
-        st.warning(resultado[1])
-    with st.sidebar:    
-        st.plotly_chart(px.pie(values=resultado[2].flatten(),names=mapping_class.values(), title='Probabilities of class prediction')) #,names=mapping.keys()
-
-
-# if resultado[3] > 0:
-uploaded_img = st.file_uploader("Sube una imagen", type=["jpg", "jpeg", "png"])
-if st.button('Run image prediction'):
-    img_bytes = np.asarray(bytearray(uploaded_img.read()), dtype=np.uint8)
-    result = img_model_prediction(img_bytes)
-    st.write(f'The model predicts the brain in the image is {mapping_img[result[0]]}, with a certainty of {result[1].max()*100}%')
+        st.warning(class_result[1])
+    chart = px.pie(
+        values=class_result[2].flatten(),
+        names=mapping_class.values(),
+        title='Probabilities of class prediction'
+    )
+    st.session_state['chart'] = chart
     with st.sidebar:
-        st.plotly_chart(px.pie(values=result[1].flatten(),names=mapping_img.values(), title='Probabilities of the prediction')) #,names=mapping.keys()
+        st.plotly_chart(chart)
+
+if st.session_state['class_result'] and st.session_state['class_result'][3] > 0:
+    st.header('MRI scan prediction')
+    uploaded_img = st.file_uploader("Upload the patient's MRI scan", type=["jpg", "jpeg", "png"])
+    if st.button('Run image prediction'):
+        img_bytes = np.asarray(bytearray(uploaded_img.read()), dtype=np.uint8)
+        result = img_model_prediction(img_bytes)
+        # st.write(result)
+        res_display = round(result[1].max()*100,2)
+        # st.write(res_display)
+        st.write('The model predicts the brain in the image is', mapping_img[result[0]], 'with a certainty of', res_display,'%')
+        with st.sidebar:
+            st.plotly_chart(px.pie(values=result[1].flatten(),names=mapping_img.values(), title='Probabilities of the prediction'),key=5) #,names=mapping.keys()
 
 # pred = model.predict(user_input)
 # Display the user input
