@@ -3,8 +3,6 @@ import os
 import numpy as np
 import streamlit as st
 import plotly.express as px
-import matplotlib.pyplot as plt
-import pickle
 # import numpy as np
 #  sys.path.append(os.path.abspath(r'C:\Users\raulg\Documents\THEBRIDGE_DS\0.-Repo_Git\ml_alzheimer_class\src'))
 sys.path.append(os.path.relpath('../src'))

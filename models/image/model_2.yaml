@@ -1,5 +1,7 @@
 model = CNN
 dataset = x2,y2 (manual random split for train, val, test)
+fit_runtime = 11 minutes
+pred_runtime = 1 sedond
 ImageDataGenerator = False
 train_accuracy / val_accuracy / test_accuracy = 0.77,0.82,0.85
 recall = 0.86

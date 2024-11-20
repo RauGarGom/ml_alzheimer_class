@@ -29,7 +29,7 @@ If for any reason the application is not running, you can execute it manually. G
 
 You will need to have Streamlit Instaled on your local computer, along with the libraries marked on **Requirements.txt**
 
-- In general, all the libraries included on **Requirements.txt** are needed to open and replicate the project.
+- In general, all the libraries included on **Requirements.txt** are needed to open and replicate the project. This file is both founded on the root folder, and inside *app_streamlit*.
 
 - **Presentations**, which are located on *docs/Presentations*. Two presentations here:
     - The technical one is prepared for a public with knowledge on Data Science. It focuses on the process of Data Analysis, Model Fitting and Predictions, and the different iterations made throughout the project.

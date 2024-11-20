@@ -3,9 +3,9 @@ import numpy as np
 # import seaborn as sns
 # import matplotlib.pyplot as plt
 from sklearn.preprocessing import StandardScaler
-from sklearn.model_selection import cross_val_score, train_test_split
+from sklearn.model_selection import train_test_split
 # from sklearn import svm
-from sklearn.metrics import auc, roc_auc_score, accuracy_score, confusion_matrix
+# from sklearn.metrics import auc, roc_auc_score, accuracy_score, confusion_matrix
 # from xgboost import XGBClassifier
 import pickle
 from tensorflow.keras import models
