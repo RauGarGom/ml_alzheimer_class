@@ -31,7 +31,7 @@ def img_eval():
                                                                      val_set = True,reshuffle=True,img_size=64)
     print('='*50)
     print('Evaluating model and printing metrics...')
-    model4c = models.load_model("../models/image/model_4.keras")
+    model5 = models.load_model("../models/image/model_5.keras")
     y1_pred = model4c.predict(x1_test).argmax(axis=1)
     print("Accuracy", accuracy_score(y1_test,y1_pred))
     print("Recall", recall_score(y1_test,y1_pred,average='weighted'))

@@ -20,3 +20,4 @@ ImageDataGenerator = False
 Optimizer = RMSprop
 train_accuracy / val_accuracy / test_accuracy = 0.96,0.94,0.94
 recall = 0.94
+
