@@ -166,3 +166,22 @@ def img_images_load(x1_train_path='../data/images/processed_train/x1.pkl',y1_tra
             print('y1_val distribution: \n',np.asarray((unique_val, counts_val)).T)
             return x1_train,x1_test,x1_val,y1_train,y1_test,y1_val,scal
 
+def recortar_centro_relativo(imagen, porcentaje_ancho=1, porcentaje_alto=0.5):
+    alto, ancho, _ = imagen.shape  # Dimensiones de la imagen
+    
+    # Calcular dimensiones del recorte
+    ancho_corte = int(ancho * porcentaje_ancho)
+    alto_corte = int(alto * porcentaje_alto)
+    
+    # Coordenadas centrales
+    centro_x, centro_y = ancho // 2, alto // 2
+    
+    # Coordenadas del recorte
+    x_inicio = max(centro_x - ancho_corte // 2, 0)
+    x_fin = min(centro_x + ancho_corte // 2, ancho)
+    y_inicio = max(centro_y - alto_corte // 2, 0)
+    y_fin = min(centro_y + alto_corte // 2, alto)
+    
+    # Recortar la imagen
+    recorte = imagen[y_inicio:y_fin, x_inicio:x_fin]
+    return recorte
