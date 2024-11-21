@@ -33,7 +33,8 @@ with st.sidebar:
         
 
 # Title of the app and header
-st.title('Alzheimer diagnosis tool')
+st.image('./')
+st.title('A.I. hlz')
 st.subheader('Medical tool for Alzheimer diagnosis by Raúl García')
 st.subheader('')
 
@@ -84,6 +85,8 @@ if st.button('Run prediction'):
 if st.session_state['class_result'] and st.session_state['class_result'][3] > 0:
     st.header('MRI scan prediction')
     uploaded_img = st.file_uploader("Upload the patient's MRI scan", type=["jpg", "jpeg", "png"])
+    enable = st.checkbox("Enable camera")
+    uploaded_img = st.camera_input("Picture of the MRI scan", disabled=not enable)
     if st.button('Run image prediction'):
         img_bytes = np.asarray(bytearray(uploaded_img.read()), dtype=np.uint8)
         result = img_model_prediction(img_bytes)
