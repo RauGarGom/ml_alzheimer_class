@@ -21,7 +21,7 @@ If the preliminary model perceives signs of Alzheimer, or is unsure about the di
     - Moderate.
 
 ## Main resources and how to use them
-- **Streamlit**: An app where a non-technical user can utilize the models. It contains a form in whose results the prediction will be based upon. It can be accessed via [this link](https://rgg-alzheimer.streamlit.app/)
+- **Streamlit**: An app where a non-technical user can utilize the models. It contains a form in whose results the prediction will be based upon. It can be accessed via [this link](https://ai-lzh.streamlit.app)
 
 If for any reason the application is not running, you can execute it manually. Go to the folder *app_streamlit* and run the following code:
 
